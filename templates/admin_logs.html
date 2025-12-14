@@ -4,6 +4,11 @@
 <section class="admin-logs-section">
     <div class="logs-container">
         <h1>Administrator Logs</h1>
+        <div class="header-actions" style="margin-bottom: 2rem;">
+            <a href="/admin/" target="_blank" class="django-admin-btn">
+                Go to Django Admin
+            </a>
+        </div>
         <p class="subtitle">Track all user activities and system events</p>
 
         <div id="loading-logs" class="loading">Loading logs...</div>
@@ -154,6 +159,24 @@
 
     .details {
         color: #cbd5e1;
+    }
+
+    .django-admin-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .django-admin-btn:hover {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 </style>
 
