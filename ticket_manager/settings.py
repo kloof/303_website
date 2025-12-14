@@ -124,7 +124,7 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 # Use local storage for dev to avoid collecting static files
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" 
 
 # Media files
 MEDIA_URL = '/media/'

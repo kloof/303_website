@@ -4,8 +4,16 @@ import os
 import sys
 
 
+
 def main():
     """Run administrative tasks."""
+    # If .env file exists, load it
+    try:
+        import dotenv
+        dotenv.load_dotenv()
+    except ImportError:
+        pass
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ticket_manager.settings")
     try:
         from django.core.management import execute_from_command_line
