@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="orders-section">
+    <div class="orders-container">
+        <div class="orders-header">
+            <h1>My Orders</h1>
+            <p class="subtitle">Your ticket purchase history</p>
+        </div>
+
+        <div id="orders-container" class="orders-grid">
+            <div class="loading">Loading your orders...</div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .orders-section {
+        min-height: 100vh;
+        padding: 2rem;
+        padding-top: 100px;
+    }
+
+    .orders-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .orders-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .orders-header h1 {
+        background: linear-gradient(135deg, #0891b2 0%, #2dd4bf 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .subtitle {
+        color: #94a3b8;
+    }
+
+    .orders-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .loading {
+        color: #94a3b8;
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .no-orders {
+        text-align: center;
+        padding: 3rem;
+        color: #94a3b8;
+    }
+
+    .order-card {
+        background: rgba(8, 145, 178, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(34, 211, 238, 0.15);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+        border-color: #0891b2;
+        box-shadow: 0 8px 25px rgba(8, 145, 178, 0.15);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        grid-column: 1 / -1;
+    }
+
+    .order-id {
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .order-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .order-status.completed {
+        background: rgba(45, 212, 191, 0.2);
+        color: #2dd4bf;
+    }
+
+    .order-status.pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+
+    .order-status.cancelled {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .order-details {
+        grid-column: 1;
+    }
+
+    .order-details h3 {
+        color: #f0f9ff;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.3rem;
+    }
+
+    .order-details p {
+        color: #94a3b8;
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+    }
+
+    .order-details strong {
+        color: #2dd4bf;
+    }
+
+    .order-qr {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .order-qr img {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        background: white;
+        padding: 4px;
+    }
+
+    .error {
+        color: #ef4444;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    @media (max-width: 600px) {
+        .order-card {
+            grid-template-columns: 1fr;
+        }
+
+        .order-qr {
+            grid-column: 1;
+            grid-row: auto;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,279 @@
+/* =========================================
+   🌊 OCEAN BREEZE - Dashboard Styles
+   ========================================= */
+
+/* Dashboard Section */
+.dashboard-section {
+    min-height: 100vh;
+    padding: 100px 5% 3rem;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    background: linear-gradient(135deg, #0891b2 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+.section-title {
+    color: #f0f9ff;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Event Cards for Dashboard */
+.event-card {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(34, 211, 238, 0.15);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    border-color: #0891b2;
+    box-shadow: 0 12px 30px rgba(8, 145, 178, 0.15);
+}
+
+.event-header-img {
+    height: 120px;
+    background: linear-gradient(135deg, #0891b2 0%, #2dd4bf 100%);
+}
+
+.event-content {
+    padding: 1.25rem;
+}
+
+.event-content .event-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.event-meta {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.event-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.icon-btn {
+    flex: 1;
+    padding: 0.6rem;
+    background: transparent;
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: #0891b2;
+    border-color: #0891b2;
+    color: white;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #0f172a;
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.1);
+    background: linear-gradient(135deg, rgba(8, 145, 178, 0.2) 0%, rgba(45, 212, 191, 0.1) 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-header h2 {
+    background: linear-gradient(135deg, #22d3ee 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.close-modal {
+    font-size: 1.8rem;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: #ef4444;
+}
+
+#create-event-form {
+    padding: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 500px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tool-group {
+    margin-bottom: 1rem;
+}
+
+.tool-group label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+}
+
+.tool-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(8, 145, 178, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.15);
+    border-radius: 10px;
+    color: #f0f9ff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.tool-input:focus {
+    outline: none;
+    border-color: #0891b2;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+}
+
+.tool-input::placeholder {
+    color: #64748b;
+}
+
+/* CTA Button for Dashboard */
+.dashboard-section .cta-btn {
+    background: linear-gradient(135deg, #0891b2 0%, #2dd4bf 100%);
+    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+}
+
+.dashboard-section .cta-btn:hover {
+    box-shadow: 0 6px 25px rgba(8, 145, 178, 0.4);
+}
+
+/* No Events Message */
+.no-events {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 16px;
+    border: 1px dashed rgba(34, 211, 238, 0.2);
+}
+
+/* Scrollbar Styling */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(8, 145, 178, 0.3);
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(8, 145, 178, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.event-card {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.event-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.event-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.event-card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.event-card:nth-child(4) {
+    animation-delay: 0.2s;
+}

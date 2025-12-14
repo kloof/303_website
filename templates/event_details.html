@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="event-details-section">
+    <div class="event-details-container">
+        <!-- Loading State -->
+        <div id="event-loading" class="loading">Loading event details...</div>
+
+        <!-- Event Content (populated by JS) -->
+        <div id="event-content" class="event-content hidden">
+            <div class="event-hero">
+                <div class="event-info">
+                    <h1 id="detail-title"></h1>
+                    <div class="event-meta-grid">
+                        <div class="meta-item">
+                            <span class="meta-icon">📅</span>
+                            <span id="detail-date"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">📍</span>
+                            <span id="detail-location"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-body">
+                <div class="description-section">
+                    <h2>About This Event</h2>
+                    <p id="detail-description"></p>
+
+                    <div id="venue-image-section" class="venue-image-section hidden">
+                        <h2>Venue</h2>
+                        <img id="venue-image" src="" alt="Venue" class="venue-image">
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="ticket-card">
+                        <h3>🎟️ Get Tickets</h3>
+
+                        <div class="availability">
+                            <div class="seats-stat">
+                                <span class="stat-number" id="available-seats">--</span>
+                                <span class="stat-text">Seats Available</span>
+                            </div>
+                        </div>
+
+                        <div class="price-range">
+                            <span class="price-label">Price Range</span>
+                            <span class="price-value" id="price-range">--</span>
+                        </div>
+
+                        <div class="tier-preview">
+                            <div class="tier vip">💎 VIP <span id="vip-price">--</span></div>
+                            <div class="tier standard">⭐ Standard <span id="standard-price">--</span></div>
+                            <div class="tier economy">🎫 Economy <span id="economy-price">--</span></div>
+                        </div>
+
+                        <a id="book-tickets-btn" href="#" class="cta-btn">Select Seats</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const EVENT_ID = "{{ event_id }}";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadEventDetails();
+    });
+
+    async function loadEventDetails() {
+        const loading = document.getElementById('event-loading');
+        const content = document.getElementById('event-content');
+
+        try {
+            // Fetch event info
+            const eventRes = await fetch(`/api/events/${EVENT_ID}/`);
+            const event = await eventRes.json();
+
+            // Fetch seats for availability
+            const seatsRes = await fetch(`/api/events/${EVENT_ID}/seats/`);
+            const seats = await seatsRes.json();
+
+            // Populate event details
+            document.getElementById('detail-title').textContent = event.title;
+            document.getElementById('detail-description').textContent = event.description;
+            document.getElementById('detail-location').textContent = event.location;
+
+            const date = new Date(event.date_time).toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            document.getElementById('detail-date').textContent = date;
+
+            // Calculate seat stats
+            const available = seats.filter(s => s.status === 'AVAILABLE').length;
+            document.getElementById('available-seats').textContent = available;
+
+            // Get price range and tier prices
+            const prices = seats.map(s => parseFloat(s.price));
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            document.getElementById('price-range').textContent =
+                minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
+
+            // Get tier prices
+            const vipSeats = seats.filter(s => s.tier === 'VIP');
+            const standardSeats = seats.filter(s => s.tier === 'STANDARD');
+            const economySeats = seats.filter(s => s.tier === 'ECONOMY');
+
+            if (vipSeats.length) {
+                document.getElementById('vip-price').textContent = `$${vipSeats[0].price}`;
+            } else {
+                document.querySelector('.tier.vip').style.display = 'none';
+            }
+
+            if (standardSeats.length) {
+                document.getElementById('standard-price').textContent = `$${standardSeats[0].price}`;
+            } else {
+                document.querySelector('.tier.standard').style.display = 'none';
+            }
+
+            if (economySeats.length) {
+                document.getElementById('economy-price').textContent = `$${economySeats[0].price}`;
+            } else {
+                document.querySelector('.tier.economy').style.display = 'none';
+            }
+
+            // Set booking link
+            document.getElementById('book-tickets-btn').href = `/book-event/${EVENT_ID}/`;
+
+            // Show venue image if available
+            if (event.venue_image) {
+                document.getElementById('venue-image').src = event.venue_image;
+                document.getElementById('venue-image-section').classList.remove('hidden');
+            }
+
+            // Show content
+            loading.classList.add('hidden');
+            content.classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error:', error);
+            loading.textContent = 'Error loading event details.';
+        }
+    }
+</script>
+
+<style>
+    .event-details-section {
+        min-height: 100vh;
+        padding: 100px 5% 3rem;
+    }
+
+    .event-details-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 3rem;
+        color: #94a3b8;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .event-hero {
+        margin-bottom: 2rem;
+    }
+
+    .event-info h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #0891b2 0%, #2dd4bf 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+    }
+
+    .event-meta-grid {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #94a3b8;
+        font-size: 1.1rem;
+    }
+
+    .meta-icon {
+        font-size: 1.2rem;
+    }
+
+    .event-body {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+    }
+
+    .description-section h2 {
+        color: #f0f9ff;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+
+    .description-section p {
+        color: #94a3b8;
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+
+    .venue-image-section {
+        margin-top: 2rem;
+    }
+
+    .venue-image-section h2 {
+        margin-bottom: 1rem;
+    }
+
+    .venue-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid rgba(34, 211, 238, 0.2);
+    }
+
+    .ticket-card {
+        background: rgba(8, 145, 178, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: sticky;
+        top: 100px;
+    }
+
+    .ticket-card h3 {
+        color: #f0f9ff;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 1.3rem;
+    }
+
+    .availability {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .seats-stat {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2dd4bf;
+    }
+
+    .stat-text {
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .price-range {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .price-label {
+        color: #94a3b8;
+    }
+
+    .price-value {
+        color: #2dd4bf;
+        font-weight: 600;
+    }
+
+    .tier-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .tier {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .tier.vip {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+    }
+
+    .tier.standard {
+        background: rgba(8, 145, 178, 0.15);
+        color: #22d3ee;
+    }
+
+    .tier.economy {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+    }
+
+    .ticket-card .cta-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .event-body {
+            grid-template-columns: 1fr;
+        }
+
+        .ticket-card {
+            position: static;
+        }
+    }
+</style>
+{% endblock %}

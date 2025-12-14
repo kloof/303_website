@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="confirmation-section">
+    <div class="confirmation-container">
+        <div class="confirmation-icon">✅</div>
+        <h1>Booking Confirmed!</h1>
+        <p class="subtitle">Your tickets have been successfully booked.</p>
+
+        <div id="tickets-container" class="tickets-list">
+            <div class="loading">Loading your tickets...</div>
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="/my-orders/" class="cta-btn">View All Orders</a>
+            <a href="/" class="secondary-btn">Browse More Events</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .confirmation-section {
+        min-height: 100vh;
+        padding: 2rem;
+        padding-top: 100px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .confirmation-container {
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .confirmation-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .confirmation-container h1 {
+        background: linear-gradient(135deg, #0891b2 0%, #2dd4bf 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .subtitle {
+        color: #94a3b8;
+        margin-bottom: 2rem;
+    }
+
+    .tickets-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .loading {
+        color: #94a3b8;
+    }
+
+    .ticket-card {
+        background: rgba(8, 145, 178, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(34, 211, 238, 0.15);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: left;
+    }
+
+    .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(34, 211, 238, 0.1);
+    }
+
+    .ticket-id {
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .ticket-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(45, 212, 191, 0.2);
+        color: #2dd4bf;
+    }
+
+    .ticket-body {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .ticket-info h3 {
+        color: #f0f9ff;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .ticket-info p {
+        color: #94a3b8;
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+    }
+
+    .ticket-info strong {
+        color: #2dd4bf;
+    }
+
+    .ticket-qr {
+        background: white;
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .ticket-qr img {
+        width: 100px;
+        height: 100px;
+        display: block;
+    }
+
+    .confirmation-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .secondary-btn {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        color: #22d3ee;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .secondary-btn:hover {
+        background: rgba(8, 145, 178, 0.2);
+        border-color: #0891b2;
+        color: #f0f9ff;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketIds = urlParams.get('tickets');
+
+        if (ticketIds) {
+            loadConfirmedTickets(ticketIds.split(',').map(id => parseInt(id)));
+        } else {
+            window.location.href = '/my-orders/';
+        }
+    });
+
+    async function loadConfirmedTickets(ticketIds) {
+        const container = document.getElementById('tickets-container');
+        const token = localStorage.getItem('access_token');
+
+        if (!token) {
+            window.location.href = '/login/';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/tickets/', {
+                headers: { 'Authorization': `JWT ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to fetch tickets');
+
+            const tickets = await response.json();
+            const confirmedTickets = tickets.filter(t => ticketIds.includes(t.id));
+
+            container.innerHTML = '';
+
+            if (confirmedTickets.length === 0) {
+                container.innerHTML = '<p style="color: #94a3b8;">No tickets found.</p>';
+                return;
+            }
+
+            confirmedTickets.forEach(ticket => {
+                const card = document.createElement('div');
+                card.className = 'ticket-card';
+                card.innerHTML = `
+                <div class="ticket-header">
+                    <span class="ticket-id">Ticket #${ticket.id}</span>
+                    <span class="ticket-status">${ticket.payment_status}</span>
+                </div>
+                <div class="ticket-body">
+                    <div class="ticket-info">
+                        <h3>${ticket.event_title || 'Event'}</h3>
+                        <p>Seat: <strong>${ticket.seat_label || 'N/A'}</strong></p>
+                        <p>Transaction: ${ticket.transaction_id?.substring(0, 8)}...</p>
+                    </div>
+                    ${ticket.qr_code ? `
+                    <div class="ticket-qr">
+                        <img src="${ticket.qr_code}" alt="QR Code">
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+                container.appendChild(card);
+            });
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = '<div class="error">Error loading tickets.</div>';
+        }
+    }
+</script>
+{% endblock %}
